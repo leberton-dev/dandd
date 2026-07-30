@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 #define WIN_W 1920
@@ -67,6 +68,17 @@ t_board *board_init(void)
 	}
 	// set player on board
 	board->tiles[board->player.y][board->player.x] = TILE_PLAYER;
+	// set borders
+	for (int row = 0; row < board->size.height; row++)
+	{
+		board->tiles[row][0] = TILE_WALL;
+		board->tiles[row][board->size.width - 1] = TILE_WALL;
+	}
+	for (int i = 0; i < board->size.width; i++)
+	{
+		board->tiles[0][i] = TILE_WALL;
+		board->tiles[board->size.height - 1][i] = TILE_WALL;
+	}
 	return (board);
 }
 
@@ -82,6 +94,8 @@ void tile_draw(t_tile tile, int px, int py)
 
 void board_move_player(t_board *board, int x, int y)
 {
+	if (board->tiles[board->player.y + y][board->player.x + x] == TILE_WALL)
+		return;
 	board->tiles[board->player.y][board->player.x] = TILE_FLOOR;
 	board->player.x += x;
 	board->player.y += y;
