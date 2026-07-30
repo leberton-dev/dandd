@@ -73,9 +73,19 @@ t_board *board_init(void)
 void tile_draw(t_tile tile, int px, int py)
 {
 	if (tile == TILE_FLOOR)
+		DrawText("", px, py, 20, BLACK);
+	else if (tile == TILE_WALL)
 		DrawText("#", px, py, 20, BLACK);
 	else if (tile == TILE_PLAYER)
 		DrawText("@", px, py, 20, BLACK);
+}
+
+void board_move_player(t_board *board, int x, int y)
+{
+	board->tiles[board->player.y][board->player.x] = TILE_FLOOR;
+	board->player.x += x;
+	board->player.y += y;
+	board->tiles[board->player.y][board->player.x] = TILE_PLAYER;
 }
 
 void board_draw(t_board *board)
@@ -96,6 +106,7 @@ void board_free(t_board *board)
 int main(void)
 {
 	InitWindow(WIN_W, WIN_H, "DANDD");
+	SetTargetFPS(120);
 
 	t_board *board = board_init();
 	if (!board)
@@ -106,6 +117,15 @@ int main(void)
 
 	while (!WindowShouldClose())
 	{
+		if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_K))
+			board_move_player(board, 0, -1);
+		else if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_J))
+			board_move_player(board, 0, 1);
+		else if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_H))
+			board_move_player(board, -1, 0);
+		else if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_L))
+			board_move_player(board, 1, 0);
+
 		BeginDrawing();
 		ClearBackground(WHITE);
 		board_draw(board);
